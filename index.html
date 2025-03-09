@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب خدمة تنظيف - كلين ماستر</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            direction: rtl; 
+        }
+        .container { 
+            width: 350px; 
+            margin: auto; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            border-radius: 10px; 
+            background: rgba(255, 255, 255, 0.9);
+        }
+        select, input, button { width: 100%; padding: 10px; margin-top: 10px; }
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.imgur.com/ZKn7xDn.png" alt="شعار الشركة" class="logo">
+        <h2>طلب خدمة تنظيف - شركة كلين ماستر</h2>
+        
+        <div id="servicesContainer">
+            <div class="serviceItem">
+                <label>اختر الخدمة</label>
+                <select class="service" onchange="calculatePrice()">
+                    <option value="10">تنظيف شقه (سعر المتر 10ج)</option>
+                    <option value="7">تنظيف سجاد المسجد (سعر المتر 7ج)</option>
+                    <option value="100">تنظيف السجاد (صغيرة 100ج)</option>
+                    <option value="150">تنظيف السجاد (كبيرة 150ج)</option>
+                    <option value="150">تنظيف ستائر (صغيرة 150ج)</option>
+                    <option value="200">تنظيف ستائر (كبيرة 200ج)</option>
+                    <option value="350">تنظيف الأنتريهات (350ج)</option>
+                    <option value="450">تنظيف الركن (صغيرة 450ج)</option>
+                    <option value="70">تنظيف الركن (كبيرة سعر المتر 70ج)</option>
+                    <option value="350">تنظيف مراتب (صغيرة 350ج)</option>
+                    <option value="450">تنظيف مراتب (كبيرة 450ج)</option>
+                    <option value="0">دهان وش نضافة (السعر بعد المعاينة)</option>
+                </select>
+                <input type="number" class="area" placeholder="المساحة أو العدد" oninput="calculatePrice()" required>
+            </div>
+        </div>
+        
+        <button onclick="addService()">إضافة خدمة أخرى</button>
+        <p>السعر الإجمالي: <span id="totalPrice">0</span> جنيه</p>
+        
+        <input type="text" id="name" placeholder="الاسم" required>
+        <input type="tel" id="phone" placeholder="رقم الهاتف" required>
+        <input type="text" id="address" placeholder="العنوان بالتفصيل" required>
+        <input type="date" id="date" required>
+        <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
+        
+        <button onclick="sendWhatsApp()">إرسال عبر واتساب</button>
+    </div>
+
+    <script>
+        function calculatePrice() {
+            let totalPrice = 0;
+            document.querySelectorAll('.serviceItem').forEach(item => {
+                let servicePrice = item.querySelector(".service").value;
+                let quantity = item.querySelector(".area").value || 1;
+                totalPrice += servicePrice * quantity;
+            });
+            document.getElementById("totalPrice").innerText = totalPrice;
+        }
+
+        function addService() {
+            let container = document.getElementById("servicesContainer");
+            let newService = document.createElement("div");
+            newService.classList.add("serviceItem");
+            newService.innerHTML = `
+                <label>اختر الخدمة</label>
+                <select class="service" onchange="calculatePrice()">
+                    <option value="10">تنظيف شقه (سعر المتر 10ج)</option>
+                    <option value="7">تنظيف سجاد المسجد (سعر المتر 7ج)</option>
+                    <option value="100">تنظيف السجاد (صغيرة 100ج)</option>
+                    <option value="150">تنظيف السجاد (كبيرة 150ج)</option>
+                    <option value="150">تنظيف ستائر (صغيرة 150ج)</option>
+                    <option value="200">تنظيف ستائر (كبيرة 200ج)</option>
+                    <option value="350">تنظيف الأنتريهات (350ج)</option>
+                    <option value="450">تنظيف الركن (صغيرة 450ج)</option>
+                    <option value="70">تنظيف الركن (كبيرة سعر المتر 70ج)</option>
+                    <option value="350">تنظيف مراتب (صغيرة 350ج)</option>
+                    <option value="450">تنظيف مراتب (كبيرة 450ج)</option>
+                    <option value="0">دهان وش نضافة (السعر بعد المعاينة)</option>
+                </select>
+                <input type="number" class="area" placeholder="المساحة أو العدد" oninput="calculatePrice()" required>
+                <button onclick="removeService(this)">❌ حذف</button>
+            `;
+            container.appendChild(newService);
+        }
+
+        function removeService(button) {
+            button.parentElement.remove();
+            calculatePrice();
+        }
+    </script>
+</body>
+</html>
