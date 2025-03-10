@@ -9,6 +9,13 @@
             font-family: Arial, sans-serif; 
             text-align: center; 
             direction: rtl; 
+            background: url('https://your-image-link.com/cleaning-animation.gif') no-repeat center center fixed; 
+            background-size: cover;
+            animation: fadeIn 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .container { 
             width: 350px; 
@@ -61,11 +68,60 @@
         <input type="date" id="date" required>
         <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
         
-        <button onclick="sendWhatsApp()">إرسال عبر واتساب</button>
+        <button onclick="sendWhatsApp()">تأكيد الحجز</button>
     </div>
 
     <script>
-        function calculatePrice() {
+        function sendWhatsApp() {
+    let phoneNumber = "201013373634"; // رقم واتساب الشركة
+    let name = document.getElementById("name").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let address = document.getElementById("address").value.trim();
+    let date = document.getElementById("date").value.trim();
+    let notes = document.getElementById("notes").value.trim() || "لا يوجد";
+
+    if (!name || !phone || !address || !date) {
+        alert("يرجى ملء جميع الحقول المطلوبة قبل تأكيد الحجز.");
+        return;
+    }
+
+    let services = [];
+    document.querySelectorAll(".serviceItem").forEach(item => {
+        let serviceElement = item.querySelector(".service");
+        let quantityElement = item.querySelector(".area");
+        let serviceText = serviceElement.selectedOptions[0].text;
+        let quantity = quantityElement.value || 1;
+        services.push(`${serviceText} - ${quantity}`);
+    });
+
+    let totalPrice = document.getElementById("totalPrice").innerText;
+
+    let message = `🔹 تأكيد حجز جديد 🔹
+
+` +
+                  `👤 الاسم: ${name}
+` +
+                  `📞 رقم الهاتف: ${phone}
+` +
+                  `📍 العنوان: ${address}
+` +
+                  `📅 تاريخ الحجز: ${date}
+` +
+                  `📝 الملاحظات: ${notes}
+
+` +
+                  `🛠️ الخدمات المطلوبة:
+${services.join("
+")}
+
+` +
+                  `💰 السعر الإجمالي: ${totalPrice} جنيه`;
+
+    let waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank");
+}
+
+function calculatePrice() {
             let totalPrice = 0;
             document.querySelectorAll('.serviceItem').forEach(item => {
                 let servicePrice = item.querySelector(".service").value;
