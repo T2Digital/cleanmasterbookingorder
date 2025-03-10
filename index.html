@@ -72,60 +72,11 @@
     </div>
 
     <script>
-        function sendWhatsApp() {
-    let phoneNumber = "201013373634"; // رقم واتساب الشركة
-    let name = document.getElementById("name").value.trim();
-    let phone = document.getElementById("phone").value.trim();
-    let address = document.getElementById("address").value.trim();
-    let date = document.getElementById("date").value.trim();
-    let notes = document.getElementById("notes").value.trim() || "لا يوجد";
-
-    if (!name || !phone || !address || !date) {
-        alert("يرجى ملء جميع الحقول المطلوبة قبل تأكيد الحجز.");
-        return;
-    }
-
-    let services = [];
-    document.querySelectorAll(".serviceItem").forEach(item => {
-        let serviceElement = item.querySelector(".service");
-        let quantityElement = item.querySelector(".area");
-        let serviceText = serviceElement.selectedOptions[0].text;
-        let quantity = quantityElement.value || 1;
-        services.push(`${serviceText} - ${quantity}`);
-    });
-
-    let totalPrice = document.getElementById("totalPrice").innerText;
-
-    let message = `🔹 تأكيد حجز جديد 🔹
-
-` +
-                  `👤 الاسم: ${name}
-` +
-                  `📞 رقم الهاتف: ${phone}
-` +
-                  `📍 العنوان: ${address}
-` +
-                  `📅 تاريخ الحجز: ${date}
-` +
-                  `📝 الملاحظات: ${notes}
-
-` +
-                  `🛠️ الخدمات المطلوبة:
-${services.join("
-")}
-
-` +
-                  `💰 السعر الإجمالي: ${totalPrice} جنيه`;
-
-    let waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, "_blank");
-}
-
-function calculatePrice() {
+        function calculatePrice() {
             let totalPrice = 0;
             document.querySelectorAll('.serviceItem').forEach(item => {
-                let servicePrice = item.querySelector(".service").value;
-                let quantity = item.querySelector(".area").value || 1;
+                let servicePrice = parseFloat(item.querySelector(".service").value);
+                let quantity = parseFloat(item.querySelector(".area").value) || 1;
                 totalPrice += servicePrice * quantity;
             });
             document.getElementById("totalPrice").innerText = totalPrice;
@@ -142,14 +93,6 @@ function calculatePrice() {
                     <option value="7">تنظيف سجاد المسجد (سعر المتر 7ج)</option>
                     <option value="100">تنظيف السجاد (صغيرة 100ج)</option>
                     <option value="150">تنظيف السجاد (كبيرة 150ج)</option>
-                    <option value="150">تنظيف ستائر (صغيرة 150ج)</option>
-                    <option value="200">تنظيف ستائر (كبيرة 200ج)</option>
-                    <option value="350">تنظيف الأنتريهات (350ج)</option>
-                    <option value="450">تنظيف الركن (صغيرة 450ج)</option>
-                    <option value="70">تنظيف الركن (كبيرة سعر المتر 70ج)</option>
-                    <option value="350">تنظيف مراتب (صغيرة 350ج)</option>
-                    <option value="450">تنظيف مراتب (كبيرة 450ج)</option>
-                    <option value="0">دهان وش نضافة (السعر بعد المعاينة)</option>
                 </select>
                 <input type="number" class="area" placeholder="المساحة أو العدد" oninput="calculatePrice()" required>
                 <button onclick="removeService(this)">❌ حذف</button>
@@ -160,6 +103,27 @@ function calculatePrice() {
         function removeService(button) {
             button.parentElement.remove();
             calculatePrice();
+        }
+
+        function sendWhatsApp() {
+            let phoneNumber = "201013373634";
+            let name = document.getElementById("name").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let address = document.getElementById("address").value.trim();
+            let date = document.getElementById("date").value.trim();
+            let notes = document.getElementById("notes").value.trim() || "لا يوجد";
+            let totalPrice = document.getElementById("totalPrice").innerText;
+            
+            let services = [];
+            document.querySelectorAll(".serviceItem").forEach(item => {
+                let serviceText = item.querySelector(".service").selectedOptions[0].text;
+                let quantity = item.querySelector(".area").value || 1;
+                services.push(`${serviceText} - ${quantity}`);
+            });
+            
+            let message = `👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n📅 التاريخ: ${date}\n📝 ملاحظات: ${notes}\n💰 السعر الإجمالي: ${totalPrice} جنيه\n🛠️ الخدمات:\n${services.join("\n")}`;
+            let waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, "_blank");
         }
     </script>
 </body>
